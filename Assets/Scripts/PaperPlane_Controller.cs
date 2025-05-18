@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.WSA;
@@ -9,23 +10,26 @@ public class PaperPlane_Controller : MonoBehaviour
     public Game_Controller game_Controller;
     public ScrollerWorld scrollerWorld;
     public Slider powerSlider;
+    public Rigidbody planeRb;
+    public TextMeshProUGUI distanceText;
+
     public float minPower = 5f;
     public float maxPower = 20f;
     public float chargeSpeed = 0.5f;
-    public Rigidbody planeRb;
 
     public bool hasLaunched = false;
+    private float distanceTravelled;
     private bool charging = false;
     private float power = 0f;
     public float liftForce = 5f;
 
     public float glideForce = 5f;          // Fuerza que empuja hacia adelante
-
     public float maxSpeed = 10f;           // Velocidad máxima de planeo
+
 
     private void Start()
     {
-        
+        distanceTravelled = 0;
     }
 
     void Update()
@@ -67,6 +71,7 @@ public class PaperPlane_Controller : MonoBehaviour
         else
         {
             GlidePlane();
+            distanceText.text = distanceTravelled.ToString();
         }
     }
 
@@ -79,7 +84,7 @@ public class PaperPlane_Controller : MonoBehaviour
         posInicial.y -= time;
 
         transform.position = posInicial;
-            
+        distanceTravelled++;
     }
 
     void LaunchPlane()
@@ -105,9 +110,12 @@ public class PaperPlane_Controller : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        Vector3 posInicial = transform.position;
+
         if (other.CompareTag("AirStream"))
         {
-            planeRb.AddForce(Vector3.up * liftForce, ForceMode.Impulse);
+            posInicial.y += 3f;
+            transform.position = posInicial;
         }
     }
 }
