@@ -4,12 +4,7 @@ using UnityEngine;
 
 public class Spawn_Controller : MonoBehaviour
 {
-    /*    public GameObject[] obstacles;
-        public GameObject airCurrent;
-        public float spawnRate = 2f;
-        public float spawnRangeX = 3f;
-        public float spawnHeight = 5f;
-        public float spawnInterval = 2f;*/
+    private Game_Controller controller;
 
     [Header("Obstacle Categories")]
     public GameObject[] groundObstacles;
@@ -17,6 +12,18 @@ public class Spawn_Controller : MonoBehaviour
 
     [Header("Air Current")]
     public GameObject airCurrent;
+
+    [Header("Environment")]
+    public GameObject[] environments_Objects;
+
+    [Header("Buildings")]
+    public GameObject[] buildingPrefabs;
+    public float buildingSpacing = 3f;
+    public int maxBuildingsOnScreen = 7;
+    public float buildingScrollSpeed = 5f;
+
+    private List<GameObject> activeBuildings = new();
+    //private float lastBuildingZ = 0f;
 
     [Header("Spawn Settings")]
     public float spawnRangeX = 5f;
@@ -34,39 +41,35 @@ public class Spawn_Controller : MonoBehaviour
 
     private float currentSpawnInterval;
     private float nextDifficultyTime;
-
-    //private bool isActive = false;
-    //private float timer;
+    int counter = 0;
 
     void Start()
     {
+        controller = FindAnyObjectByType<Game_Controller>();
         currentSpawnInterval = initialSpawnInterval;
         nextDifficultyTime = Time.time + difficultyInterval;
         StartCoroutine(SpawnRoutine());
     }
-    /*    void Update()
+
+    private void Update()
+    {
+        if (!controller.beforeStart)
         {
-            if (!isActive) return;
+            SpawnBuildings();
+        }
+    }
 
-            timer += Time.deltaTime;
-            if (timer >= spawnInterval)
-            {
-                Vector3 spawnPos = new(Random.Range(-spawnRangeX, spawnRangeX), Random.Range(0f, spawnHeight), 25f);
-                GameObject toSpawn = Random.value > 0.7f ? airCurrent : obstacles[Random.Range(0, obstacles.Length)];
-                Instantiate(toSpawn, spawnPos, Quaternion.identity);
-                timer = 0f;
-            }
-
-            if (transform.position.z < -10f)
-            {
-                Destroy(gameObject);
-            }
-        }*/
     IEnumerator SpawnRoutine()
     {
         while (true)
         {
             SpawnElement();
+
+            // Cada 2 ciclos, spawnea un objeto de entorno
+            counter++;
+            if (counter % 2 == 0)
+                SpawnEnvironment();
+
             yield return new WaitForSeconds(currentSpawnInterval);
 
             // Aumentar dificultad con el tiempo
@@ -79,9 +82,6 @@ public class Spawn_Controller : MonoBehaviour
     }
     void SpawnElement()
     {
-        /*        Vector3 spawnPos = new(Random.Range(-spawnRangeX, spawnRangeX), Random.Range(0f, spawnHeight), 25f);
-                GameObject toSpawn = Random.value > 0.7f ? airCurrent : obstacles[Random.Range(0, obstacles.Length)];
-                Instantiate(toSpawn, spawnPos, Quaternion.identity);*/
         GameObject toSpawn;
         Vector3 spawnPos;
 
@@ -120,9 +120,78 @@ public class Spawn_Controller : MonoBehaviour
         Instantiate(toSpawn, spawnPos, Quaternion.identity);
     }
 
-    public void Activate()
+    void SpawnEnvironment()
     {
-        //isActive = true;
-        //timer = 0f;
+        // Seleccionamos un objeto de entorno aleatoriamente
+        GameObject envObject = environments_Objects[Random.Range(0, environments_Objects.Length)];
+        Vector3 spawnPos = Vector3.zero;
+
+/*        // Clasificamos por nombre, tag o incluso un sistema mejor si hay muchos
+        if (envObject.tag.Contains("Building"))
+        {
+            spawnPos = new Vector3(-10f, 0f, spawnZ);
+        }*/
+        if (envObject.tag.Contains("Tree") || envObject.tag.Contains("Decoration"))
+        {
+            spawnPos = new Vector3(6f, 0f, spawnZ);
+        }
+        else if (envObject.tag.Contains("Car") || envObject.tag.Contains("Street"))
+        {
+            spawnPos = new Vector3(11, 0f, spawnZ);
+        }
+
+        Instantiate(envObject, spawnPos, Quaternion.identity);
+    }
+
+    void SpawnBuildings()
+    {
+        /*        // Verificar si el último edificio está lo suficientemente atrás para generar uno nuevo
+                if (activeBuildings.Count == 0 || 
+                    activeBuildings[activeBuildings.Count - 1].transform.position.z < (Camera.main.transform.position.z + 15f))
+                {
+                    GameObject prefab = buildingPrefabs[Random.Range(0, buildingPrefabs.Length)];
+                    Vector3 spawnPos = new(-10f, 0f, lastBuildingZ); // -10f en X para la izquierda de la pantalla
+                    GameObject building = Instantiate(prefab, spawnPos, Quaternion.identity);
+                    activeBuildings.Add(building);
+
+                    lastBuildingZ += buildingSpacing; // Pegado sin espacio
+                    //Debug.Log("Espacio" + lastBuildingZ);
+                    lastBuildingZ = 0f;
+                }*/
+
+        // Si no hay edificios, instanciamos el primero en la posición inicial
+        if (activeBuildings.Count == 0)
+        {
+            GameObject prefab = buildingPrefabs[Random.Range(0, buildingPrefabs.Length)];
+            GameObject building = Instantiate(prefab, new Vector3(-10f, 0f, 0f), Quaternion.identity);
+            activeBuildings.Add(building);
+        }
+        else
+        {
+            // Verificar si el último edificio está suficientemente atrás para instanciar otro
+            GameObject last = activeBuildings[activeBuildings.Count - 1];
+
+            // Obtener tamaño real del último edificio
+            Renderer lastRenderer = last.GetComponent<Renderer>();
+            float lastZ = last.transform.position.z;
+            float lastLength = lastRenderer.bounds.size.z;
+
+            // Solo instanciar si el último edificio ya está lo suficientemente cerca de la cámara
+            if (lastZ < Camera.main.transform.position.z + 15f)
+            {
+                GameObject prefab = buildingPrefabs[Random.Range(0, buildingPrefabs.Length)];
+                GameObject building = Instantiate(prefab, Vector3.zero, Quaternion.identity);
+
+                // Obtener tamaño del nuevo edificio
+                Renderer newRenderer = building.GetComponent<Renderer>();
+                float newLength = newRenderer.bounds.size.z;
+
+                // Posicionar el nuevo edificio justo después del anterior
+                float newZ = lastZ + (lastLength / 2f) + (newLength / 2f);
+                building.transform.position = new Vector3(-10f, 0f, newZ);
+
+                activeBuildings.Add(building);
+            }
+        }
     }
 }

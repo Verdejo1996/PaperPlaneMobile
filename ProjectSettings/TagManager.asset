@@ -5,6 +5,12 @@ TagManager:
   serializedVersion: 2
   tags:
   - AirStream
+  - Obstacle
+  - Floor
+  - Building
+  - Tree
+  - Decoration
+  - Car
   layers:
   - Default
   - TransparentFX

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.AdaptivePerformance.VisualScripting;
 using UnityEngine.UI;
 using UnityEngine.WSA;
 
@@ -12,6 +13,7 @@ public class PaperPlane_Controller : MonoBehaviour
     public Slider powerSlider;
     public Rigidbody planeRb;
     public TextMeshProUGUI distanceText;
+    private Vector3 posInicial;
 
     public float minPower = 5f;
     public float maxPower = 20f;
@@ -26,10 +28,13 @@ public class PaperPlane_Controller : MonoBehaviour
     public float glideForce = 5f;          // Fuerza que empuja hacia adelante
     public float maxSpeed = 10f;           // Velocidad máxima de planeo
 
+    private float glideTime;
+
 
     private void Start()
     {
         distanceTravelled = 0;
+
     }
 
     void Update()
@@ -68,7 +73,7 @@ public class PaperPlane_Controller : MonoBehaviour
                 }
             }
         }
-        else
+        else if(!game_Controller.beforeStart && Time.timeScale == 1)
         {
             GlidePlane();
             distanceText.text = distanceTravelled.ToString();
@@ -77,11 +82,10 @@ public class PaperPlane_Controller : MonoBehaviour
 
     void GlidePlane()
     {
-        Vector3 posInicial = transform.position;
+        posInicial = transform.position;
+        glideTime = Time.deltaTime * 0.1f;
 
-        float time = Time.deltaTime * 0.1f;
-
-        posInicial.y -= time;
+        posInicial.y -= glideTime;
 
         transform.position = posInicial;
         distanceTravelled++;
@@ -116,6 +120,21 @@ public class PaperPlane_Controller : MonoBehaviour
         {
             posInicial.y += 3f;
             transform.position = posInicial;
+        }
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.collider.CompareTag("Floor"))
+        {
+            Time.timeScale = 0f;
+            game_Controller.endGame = true;
+        }
+        if (collision.collider.CompareTag("Obstacle"))
+        {
+            planeRb.useGravity = true;
+            hasLaunched = false;
+            Debug.Log(planeRb.useGravity);
         }
     }
 }
