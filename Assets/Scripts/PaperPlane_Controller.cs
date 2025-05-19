@@ -134,7 +134,7 @@ public class PaperPlane_Controller : MonoBehaviour
         {
             planeRb.useGravity = true;
             hasLaunched = false;
-            Debug.Log(planeRb.useGravity);
+
         }
     }
 }

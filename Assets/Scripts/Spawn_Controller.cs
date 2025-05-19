@@ -108,8 +108,8 @@ public class Spawn_Controller : MonoBehaviour
             else if (groundObstacles.Length > 0)
             {
                 toSpawn = groundObstacles[Random.Range(0, groundObstacles.Length)];
-                float yPos = Random.Range(groundMinY, groundMaxY);
-                spawnPos = new Vector3(Random.Range(-spawnRangeX, spawnRangeX), yPos, spawnZ);
+                //float yPos = Random.Range(groundMinY, groundMaxY);
+                spawnPos = new Vector3(Random.Range(-spawnRangeX, spawnRangeX), 0.5f, spawnZ);
             }
             else
             {
@@ -117,7 +117,7 @@ public class Spawn_Controller : MonoBehaviour
             }
         }
 
-        Instantiate(toSpawn, spawnPos, Quaternion.identity);
+        Instantiate(toSpawn, spawnPos, toSpawn.transform.rotation);
     }
 
     void SpawnEnvironment()
@@ -133,7 +133,7 @@ public class Spawn_Controller : MonoBehaviour
         }*/
         if (envObject.tag.Contains("Tree") || envObject.tag.Contains("Decoration"))
         {
-            spawnPos = new Vector3(6f, 0f, spawnZ);
+            spawnPos = new Vector3(6f, 0.2f, spawnZ);
         }
         else if (envObject.tag.Contains("Car") || envObject.tag.Contains("Street"))
         {
