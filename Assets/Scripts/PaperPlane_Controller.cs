@@ -98,20 +98,6 @@ public class PaperPlane_Controller : MonoBehaviour
         game_Controller.StartGame();
     }
 
-    void ApplyGlidingPhysics()
-    {
-/*        // Empuja suavemente hacia adelante
-        Vector3 forwardForce = transform.forward * glideForce;
-        if (planeRb.velocity.magnitude < maxSpeed)
-        {
-            planeRb.AddForce(forwardForce);
-        }
-
-        // Agrega una fuerza de "sustentación" hacia arriba proporcional a la velocidad
-        Vector3 lift = Vector3.up * liftForce * Mathf.Clamp01(planeRb.velocity.magnitude / maxSpeed);
-        planeRb.AddForce(lift, ForceMode.Force);*/
-    }
-
     private void OnTriggerEnter(Collider other)
     {
         Vector3 posInicial = transform.position;
@@ -129,12 +115,12 @@ public class PaperPlane_Controller : MonoBehaviour
         {
             Time.timeScale = 0f;
             game_Controller.endGame = true;
+            game_Controller.GameOver();
         }
-        if (collision.collider.CompareTag("Obstacle"))
+        if (collision.collider.CompareTag("Obstacle") || collision.collider.CompareTag("Decoration") || collision.collider.CompareTag("Tree"))
         {
             planeRb.useGravity = true;
             hasLaunched = false;
-
         }
     }
 }

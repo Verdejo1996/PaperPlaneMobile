@@ -9,6 +9,7 @@ public class Game_Controller : MonoBehaviour
     public GameObject staticScene;     // Edificio y ventana
     public GameObject dynamicWorld;    // Contenedor de spawners y scroll
     public GameObject pauseMenuUI;
+    public GameObject gameOverUI;
     public TextMeshProUGUI gameText;
     public TextMeshProUGUI endText;
 
@@ -24,6 +25,7 @@ public class Game_Controller : MonoBehaviour
     private void Start()
     {
         pauseMenuUI.SetActive(false);
+        gameOverUI.SetActive(false);
         beforeStart = true;
         endGame = false;
         if (beforeStart)
@@ -78,6 +80,19 @@ public class Game_Controller : MonoBehaviour
             Time.timeScale = 1f;
         }
         isPaused = false;
+    }
+
+    public void GameOver()
+    {
+        Time.timeScale = 0f;
+        gameOverUI.SetActive(true);
+    }
+
+    public void RestartGame()
+    {
+        SceneManager.LoadScene(1);
+        gameStarted = false;
+        Time.timeScale = 1f;
     }
 
     public void ReturnToMainMenu()

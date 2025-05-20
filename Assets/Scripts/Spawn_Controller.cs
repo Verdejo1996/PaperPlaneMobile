@@ -90,8 +90,8 @@ public class Spawn_Controller : MonoBehaviour
         {
             // Corriente de aire: posición baja
             toSpawn = airCurrent;
-            float yPos = Random.Range(groundMinY, groundMaxY); // cerca del suelo
-            spawnPos = new(Random.Range(-spawnRangeX, spawnRangeX), yPos, spawnZ);
+            //float yPos = Random.Range(groundMinY, groundMaxY); // cerca del suelo
+            spawnPos = new(Random.Range(-spawnRangeX, spawnRangeX), 0f, spawnZ);
             //Instantiate(airCurrent, spawnPos, Quaternion.identity);
         }
         else
