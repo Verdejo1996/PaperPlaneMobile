@@ -4,7 +4,6 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.AdaptivePerformance.VisualScripting;
 using UnityEngine.UI;
-using UnityEngine.WSA;
 
 public class PaperPlane_Controller : MonoBehaviour
 {
@@ -76,6 +75,7 @@ public class PaperPlane_Controller : MonoBehaviour
         else if(!game_Controller.beforeStart && Time.timeScale == 1)
         {
             GlidePlane();
+            ReturnPosZ();
             distanceText.text = distanceTravelled.ToString();
         }
     }
@@ -91,9 +91,32 @@ public class PaperPlane_Controller : MonoBehaviour
         distanceTravelled++;
     }
 
+    void ReturnPosZ()
+    {
+        posInicial = transform.position;
+        float zReturn = Time.deltaTime * 0.5f;
+
+        if(posInicial.z <= 1.2f)
+        {
+            zReturn = 0f;
+        }
+        
+        posInicial.z -= zReturn;
+        transform.position = posInicial;
+        
+    }
+
     void LaunchPlane()
     {
         hasLaunched = true;
+        planeRb.velocity = 5 * Vector3.forward;
+
+        StartCoroutine(StarGameAfterDelay());
+    }
+
+    IEnumerator StarGameAfterDelay()
+    {
+        yield return new WaitForSeconds(1.5f);
 
         game_Controller.StartGame();
     }

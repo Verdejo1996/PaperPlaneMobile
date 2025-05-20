@@ -145,20 +145,6 @@ public class Spawn_Controller : MonoBehaviour
 
     void SpawnBuildings()
     {
-        /*        // Verificar si el último edificio está lo suficientemente atrás para generar uno nuevo
-                if (activeBuildings.Count == 0 || 
-                    activeBuildings[activeBuildings.Count - 1].transform.position.z < (Camera.main.transform.position.z + 15f))
-                {
-                    GameObject prefab = buildingPrefabs[Random.Range(0, buildingPrefabs.Length)];
-                    Vector3 spawnPos = new(-10f, 0f, lastBuildingZ); // -10f en X para la izquierda de la pantalla
-                    GameObject building = Instantiate(prefab, spawnPos, Quaternion.identity);
-                    activeBuildings.Add(building);
-
-                    lastBuildingZ += buildingSpacing; // Pegado sin espacio
-                    //Debug.Log("Espacio" + lastBuildingZ);
-                    lastBuildingZ = 0f;
-                }*/
-
         // Si no hay edificios, instanciamos el primero en la posición inicial
         if (activeBuildings.Count == 0)
         {
