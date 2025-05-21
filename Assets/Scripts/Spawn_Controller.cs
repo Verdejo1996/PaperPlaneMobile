@@ -13,6 +13,15 @@ public class Spawn_Controller : MonoBehaviour
     [Header("Air Current")]
     public GameObject airCurrent;
 
+    [Header("Collectable")]
+    public GameObject itemCollect;
+
+    [Header("PowerUp")]
+    public GameObject powerUp;
+
+    [Header("Cat")]
+    public GameObject catObject;
+
     [Header("Environment")]
     public GameObject[] environments_Objects;
 
@@ -37,7 +46,7 @@ public class Spawn_Controller : MonoBehaviour
     public float initialSpawnInterval = 2f;   // Comienza cada 2 segundos
     public float minSpawnInterval = 0.6f;     // No baja de 0.6s
     public float spawnAcceleration = 0.05f;   // Cuánto se reduce por ciclo
-    public float difficultyInterval = 10f;    // Cada cuántos segundos aumenta dificultad
+    public float difficultyInterval = 5f;    // Cada cuántos segundos aumenta dificultad
 
     private float currentSpawnInterval;
     private float nextDifficultyTime;
@@ -64,6 +73,9 @@ public class Spawn_Controller : MonoBehaviour
         while (true)
         {
             SpawnElement();
+            SpawnItem();
+            SpawnPowerUp();
+            SpawnCat();
 
             // Cada 2 ciclos, spawnea un objeto de entorno
             counter++;
@@ -86,11 +98,11 @@ public class Spawn_Controller : MonoBehaviour
         Vector3 spawnPos;
 
         // Elegir qué objeto spawnear: corriente o obstáculo
-        if (Random.value > 0.7f)
+        if (Random.value > 0.5f)
         {
             // Corriente de aire: posición baja
             toSpawn = airCurrent;
-            //float yPos = Random.Range(groundMinY, groundMaxY); // cerca del suelo
+
             spawnPos = new(Random.Range(-spawnRangeX, spawnRangeX), 0f, spawnZ);
             //Instantiate(airCurrent, spawnPos, Quaternion.identity);
         }
@@ -118,6 +130,49 @@ public class Spawn_Controller : MonoBehaviour
         }
 
         Instantiate(toSpawn, spawnPos, toSpawn.transform.rotation);
+    }
+
+    void SpawnItem()
+    {
+        GameObject toSpawn;
+        Vector3 spawnPos;
+
+        if (Random.value > 0.7f)
+        {
+            toSpawn = itemCollect;
+
+            float yPos = Random.Range(airMinY, airMaxY);
+            spawnPos = new Vector3(Random.Range(-spawnRangeX, spawnRangeX), yPos, spawnZ);
+            Instantiate(itemCollect, spawnPos, toSpawn.transform.rotation);
+        }
+    }
+
+    void SpawnPowerUp()
+    {
+        GameObject toSpawn;
+        Vector3 spawnPos;
+
+        if (Random.value > 0.9f)
+        {
+            toSpawn = powerUp;
+
+            float yPos = Random.Range(airMinY, airMaxY);
+            spawnPos = new Vector3(Random.Range(-spawnRangeX, spawnRangeX), yPos, spawnZ);
+            Instantiate(powerUp, spawnPos, toSpawn.transform.rotation);
+        }
+    }
+
+    void SpawnCat()
+    {
+        GameObject toSpawn;
+        Vector3 spawnPos;
+
+        if (Random.value > 0.5f)
+        {
+            toSpawn = catObject;
+            spawnPos = new Vector3(Random.Range(-spawnRangeX, spawnRangeX), 0.5f, spawnZ);
+            Instantiate(catObject, spawnPos, toSpawn.transform.rotation);
+        }
     }
 
     void SpawnEnvironment()

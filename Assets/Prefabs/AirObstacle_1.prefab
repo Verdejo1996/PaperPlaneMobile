@@ -47,6 +47,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   scrollSpeed: 5
+  addSpeed: 3
+  difficultyInterval: 5
 --- !u!65 &6060730271190968558
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -66,7 +68,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 2.3, y: 0.8, z: 1}
+  m_Size: {x: 2.3, y: 0.4, z: 1}
   m_Center: {x: 0, y: 0.3, z: 0}
 --- !u!1001 &2735606866880339831
 PrefabInstance:

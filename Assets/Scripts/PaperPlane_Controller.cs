@@ -12,6 +12,7 @@ public class PaperPlane_Controller : MonoBehaviour
     public Slider powerSlider;
     public Rigidbody planeRb;
     public TextMeshProUGUI distanceText;
+    public TextMeshProUGUI scoreText;
     private Vector3 posInicial;
 
     public float minPower = 5f;
@@ -28,7 +29,7 @@ public class PaperPlane_Controller : MonoBehaviour
     public float maxSpeed = 10f;           // Velocidad máxima de planeo
 
     private float glideTime;
-
+    public int itemCollect = 0;
 
     private void Start()
     {
@@ -77,13 +78,14 @@ public class PaperPlane_Controller : MonoBehaviour
             GlidePlane();
             ReturnPosZ();
             distanceText.text = distanceTravelled.ToString();
+            scoreText.text = itemCollect.ToString();
         }
     }
 
     void GlidePlane()
     {
         posInicial = transform.position;
-        glideTime = Time.deltaTime * 0.1f;
+        glideTime = Time.deltaTime * 0.3f;
 
         posInicial.y -= glideTime;
 
@@ -130,6 +132,15 @@ public class PaperPlane_Controller : MonoBehaviour
             posInicial.y += 3f;
             transform.position = posInicial;
         }
+        if (other.CompareTag("Item"))
+        {
+            itemCollect++;
+        }
+        if (other.CompareTag("PowerUp"))
+        {
+            posInicial.y += 10f;
+            transform.position = posInicial;
+        }
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -146,4 +157,6 @@ public class PaperPlane_Controller : MonoBehaviour
             hasLaunched = false;
         }
     }
+
+    
 }

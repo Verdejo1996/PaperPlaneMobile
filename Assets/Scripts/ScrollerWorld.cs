@@ -5,8 +5,15 @@ using UnityEngine;
 public class ScrollerWorld : MonoBehaviour
 {
     public float scrollSpeed = 5f;
-    //private bool isActive = false;
+    public float addSpeed = 3f;
+    public float difficultyInterval = 5f;
+    private float nextDifficultyTime;
 
+
+    private void Start()
+    {
+        nextDifficultyTime = Time.time + difficultyInterval;
+    }
     void Update()
     {
 
@@ -15,6 +22,12 @@ public class ScrollerWorld : MonoBehaviour
         if (transform.position.z < -10f)
         {
             Destroy(gameObject);
+        }
+
+        if(Time.time >= nextDifficultyTime)
+        {
+            scrollSpeed += addSpeed;
+            nextDifficultyTime = Time.time + difficultyInterval;
         }
 
     }

@@ -11,6 +11,8 @@ TagManager:
   - Tree
   - Decoration
   - Car
+  - Item
+  - PowerUp
   layers:
   - Default
   - TransparentFX
